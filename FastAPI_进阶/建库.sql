@@ -1,0 +1,1 @@
+create database fast_api;
