@@ -2,7 +2,7 @@
 
 基于 **FastAPI + SQLAlchemy 2.0（异步）+ MySQL + Redis** 实现的新闻资讯类应用后端服务，为移动端新闻前端提供完整的 RESTful API，涵盖用户认证、新闻浏览、收藏与浏览历史等核心业务。
 
----
+***
 
 ## 目录
 
@@ -14,7 +14,7 @@
 - [贡献指南](#贡献指南)
 - [许可证](#许可证)
 
----
+***
 
 ## 项目概述
 
@@ -24,12 +24,12 @@
 
 ### 核心业务功能
 
-| 模块 | 功能 |
-| --- | --- |
-| 用户（users） | 用户注册、登录、基于 Token 的身份认证、查询/修改用户信息、修改密码 |
-| 新闻（news） | 新闻分类列表、分页新闻列表、新闻详情、浏览量自增、相关新闻推荐 |
-| 收藏（favorite） | 检查收藏状态、添加/取消收藏、分页收藏列表、清空收藏 |
-| 历史（history） | 记录浏览历史、分页历史列表、删除单条/清空历史 |
+| 模块           | 功能                                    |
+| ------------ | ------------------------------------- |
+| 用户（users）    | 用户注册、登录、基于 Token 的身份认证、查询/修改用户信息、修改密码 |
+| 新闻（news）     | 新闻分类列表、分页新闻列表、新闻详情、浏览量自增、相关新闻推荐       |
+| 收藏（favorite） | 检查收藏状态、添加/取消收藏、分页收藏列表、清空收藏            |
+| 历史（history）  | 记录浏览历史、分页历史列表、删除单条/清空历史               |
 
 ### 设计目标与架构特点
 
@@ -38,23 +38,23 @@
 - **缓存旁路（Cache-Aside）模式**：新闻分类与新闻列表优先读 Redis，未命中时回源 MySQL 并异步回填缓存，按数据稳定性设置差异化过期时间。
 - **统一响应与异常处理**：所有接口遵循 `{code, message, data}` 统一响应结构；全局注册 `HTTPException`、`IntegrityError`、`SQLAlchemyError` 与兜底异常处理器，屏蔽底层错误细节。
 
----
+***
 
 ## 技术栈
 
-| 类别 | 技术 | 版本要求 | 说明 |
-| --- | --- | --- | --- |
-| 语言 | Python | ≥ 3.10（开发环境 3.13） | 需支持 `asyncio` 与新式类型注解 |
-| Web 框架 | FastAPI | 0.141.x | RESTful API 框架，自带 OpenAPI/Swagger 文档 |
-| ASGI 服务器 | Uvicorn | 0.52.x | 异步应用服务器 |
-| ORM | SQLAlchemy | 2.0.x | 使用 `DeclarativeBase` / `Mapped` / `AsyncSession` |
-| 数据库驱动 | aiomysql | 0.3.x | MySQL 异步驱动 |
-| 数据库 | MySQL | 8.0+ | 字符集要求 `utf8mb4` |
-| 缓存 | Redis（redis-py asyncio） | 服务端 6+ / 客户端 8.x | 新闻分类与列表缓存 |
-| 数据校验 | Pydantic | 2.x（随 FastAPI 安装） | 请求/响应模型定义与校验 |
-| 密码加密 | passlib + bcrypt | passlib 1.7.4 / bcrypt 4.0.1 | 密码哈希存储（注意：`passlib 1.7.4` 需搭配 `bcrypt==4.0.1`） |
+| 类别       | 技术                      | 版本要求                         | 说明                                               |
+| -------- | ----------------------- | ---------------------------- | ------------------------------------------------ |
+| 语言       | Python                  | ≥ 3.10（开发环境 3.13）            | 需支持 `asyncio` 与新式类型注解                            |
+| Web 框架   | FastAPI                 | 0.141.x                      | RESTful API 框架，自带 OpenAPI/Swagger 文档             |
+| ASGI 服务器 | Uvicorn                 | 0.52.x                       | 异步应用服务器                                          |
+| ORM      | SQLAlchemy              | 2.0.x                        | 使用 `DeclarativeBase` / `Mapped` / `AsyncSession` |
+| 数据库驱动    | aiomysql                | 0.3.x                        | MySQL 异步驱动                                       |
+| 数据库      | MySQL                   | 8.0+                         | 字符集要求 `utf8mb4`                                  |
+| 缓存       | Redis（redis-py asyncio） | 服务端 6+ / 客户端 8.x             | 新闻分类与列表缓存                                        |
+| 数据校验     | Pydantic                | 2.x（随 FastAPI 安装）            | 请求/响应模型定义与校验                                     |
+| 密码加密     | passlib + bcrypt        | passlib 1.7.4 / bcrypt 4.0.1 | 密码哈希存储（注意：`passlib 1.7.4` 需搭配 `bcrypt==4.0.1`）   |
 
----
+***
 
 ## 快速开始
 
@@ -92,24 +92,20 @@ pip install fastapi==0.141.1 uvicorn==0.52.4 sqlalchemy==2.0.43 aiomysql==0.3.2 
 ### 3. 初始化数据库
 
 1. 启动 MySQL 服务，创建数据库（表结构与 `models/` 下的 ORM 模型一一对应）：
-
    ```sql
    CREATE DATABASE IF NOT EXISTS news_app DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
    ```
-
-2. 依次创建以下数据表：`user`、`user_token`、`news_category`、`news`、`favorite`、`history`，并导入新闻与分类测试数据。
+2. 依次创建以下数据表：`user`、`user_token`、`news_category`、`news`、`favorite`、`history`，并导入新闻与分类测试数据。也可以直接导入项目物料的数据库sql文件。
 
 ### 4. 修改配置
 
 项目配置以模块级常量方式集中管理：
 
-- **MySQL 连接**：编辑 [db_conf.py](file:///d:/code/黑马FastAPI/toutiao_backend/config/db_conf.py) 中的 `ASYNC_DATABASE_URL`，格式为：
-
+- **MySQL 连接**：编辑 [db\_conf.py](file:///d:/code/黑马FastAPI/toutiao_backend/config/db_conf.py) 中的 `ASYNC_DATABASE_URL`，格式为：
   ```
   mysql+aiomysql://<用户名>:<密码>@<主机>:<端口>/news_app?charset=utf8mb4
   ```
-
-- **Redis 连接**：编辑 [cache_config.py](file:///d:/code/黑马FastAPI/toutiao_backend/config/cache_config.py) 中的 `REDIS_HOST`、`REDIS_PORT`、`REDIS_DB`。
+- **Redis 连接**：编辑 [cache\_config.py](file:///d:/code/黑马FastAPI/toutiao_backend/config/cache_config.py) 中的 `REDIS_HOST`、`REDIS_PORT`、`REDIS_DB`。
 
 ### 5. 启动服务
 
@@ -123,7 +119,7 @@ uvicorn main:app --reload --host 0.0.0.0 --port 8000
 - 交互式 API 文档（Swagger UI）：<http://127.0.0.1:8000/docs>
 - ReDoc 文档：<http://127.0.0.1:8000/redoc>
 
----
+***
 
 ## 使用说明
 
@@ -143,34 +139,32 @@ uvicorn main:app --reload --host 0.0.0.0 --port 8000
 
 1. 注册或登录成功后，服务端生成 UUID Token（有效期 7 天）并写入 `user_token` 表，随响应返回。
 2. 访问需要登录的接口时，在请求头携带：
-
    ```
    Authorization: Bearer <token>
    ```
-
 3. Token 缺失、无效或过期时返回 `401`。
 
 ### API 接口一览
 
-| 方法 | 路径 | 说明 | 是否需要登录 |
-| --- | --- | --- | --- |
-| POST | `/api/user/register` | 用户注册 | 否 |
-| POST | `/api/user/login` | 用户登录 | 否 |
-| GET | `/api/user/info` | 获取当前用户信息 | 是 |
-| PUT | `/api/user/update` | 修改用户信息（昵称/头像/性别/简介/手机号） | 是 |
-| PUT | `/api/user/password` | 修改密码（新密码至少 6 位） | 是 |
-| GET | `/api/news/categories` | 获取新闻分类列表 | 否 |
-| GET | `/api/news/list` | 分页获取新闻列表（`categoryId`、`page`、`pageSize`） | 否 |
-| GET | `/api/news/detail` | 获取新闻详情（浏览量 +1，含相关新闻） | 否 |
-| GET | `/api/favorite/check` | 检查新闻收藏状态（`newsId`） | 是 |
-| POST | `/api/favorite/add` | 添加收藏 | 是 |
-| DELETE | `/api/favorite/remove` | 取消收藏（`newsId`） | 是 |
-| GET | `/api/favorite/list` | 分页获取收藏列表 | 是 |
-| DELETE | `/api/favorite/clear` | 清空收藏列表 | 是 |
-| POST | `/api/history/add` | 添加浏览记录 | 是 |
-| GET | `/api/history/list` | 分页获取浏览历史 | 是 |
-| DELETE | `/api/history/delete/{history_id}` | 删除单条浏览记录 | 是 |
-| DELETE | `/api/history/clear` | 清空浏览历史 | 是 |
+| 方法     | 路径                                 | 说明                                       | 是否需要登录 |
+| ------ | ---------------------------------- | ---------------------------------------- | ------ |
+| POST   | `/api/user/register`               | 用户注册                                     | 否      |
+| POST   | `/api/user/login`                  | 用户登录                                     | 否      |
+| GET    | `/api/user/info`                   | 获取当前用户信息                                 | 是      |
+| PUT    | `/api/user/update`                 | 修改用户信息（昵称/头像/性别/简介/手机号）                  | 是      |
+| PUT    | `/api/user/password`               | 修改密码（新密码至少 6 位）                          | 是      |
+| GET    | `/api/news/categories`             | 获取新闻分类列表                                 | 否      |
+| GET    | `/api/news/list`                   | 分页获取新闻列表（`categoryId`、`page`、`pageSize`） | 否      |
+| GET    | `/api/news/detail`                 | 获取新闻详情（浏览量 +1，含相关新闻）                     | 否      |
+| GET    | `/api/favorite/check`              | 检查新闻收藏状态（`newsId`）                       | 是      |
+| POST   | `/api/favorite/add`                | 添加收藏                                     | 是      |
+| DELETE | `/api/favorite/remove`             | 取消收藏（`newsId`）                           | 是      |
+| GET    | `/api/favorite/list`               | 分页获取收藏列表                                 | 是      |
+| DELETE | `/api/favorite/clear`              | 清空收藏列表                                   | 是      |
+| POST   | `/api/history/add`                 | 添加浏览记录                                   | 是      |
+| GET    | `/api/history/list`                | 分页获取浏览历史                                 | 是      |
+| DELETE | `/api/history/delete/{history_id}` | 删除单条浏览记录                                 | 是      |
+| DELETE | `/api/history/clear`               | 清空浏览历史                                   | 是      |
 
 ### 常用操作示例
 
@@ -208,13 +202,13 @@ curl "http://127.0.0.1:8000/api/favorite/list?page=1&pageSize=10" \
   -H "Authorization: Bearer <token>"
 ```
 
-> 注意：请求体与查询参数中的字段采用 **camelCase** 命名（如 `newsId`、`pageSize`、`categoryId`），由 Pydantic 别名映射至后端的 snake_case 字段。
+> 注意：请求体与查询参数中的字段采用 **camelCase** 命名（如 `newsId`、`pageSize`、`categoryId`），由 Pydantic 别名映射至后端的 snake\_case 字段。
 
 ### 与前端联调
 
 项目已在 [main.py](file:///d:/code/黑马FastAPI/toutiao_backend/main.py) 中配置 `CORSMiddleware`（开发环境允许所有来源），前端应用直接请求 `http://127.0.0.1:8000` 即可联调。**正式上线前应将 `allow_origins` 收敛为具体域名。**
 
----
+***
 
 ## 项目结构
 
@@ -251,7 +245,7 @@ toutiao_backend/
     └── exception_handlers.py    # 全局异常处理器注册
 ```
 
----
+***
 
 ## 贡献指南
 
@@ -269,25 +263,25 @@ toutiao_backend/
 
 采用 [Conventional Commits](https://www.conventionalcommits.org/) 格式：
 
-| 前缀 | 用途 |
-| --- | --- |
-| `feat` | 新功能 |
-| `fix` | 缺陷修复 |
+| 前缀         | 用途          |
+| ---------- | ----------- |
+| `feat`     | 新功能         |
+| `fix`      | 缺陷修复        |
 | `refactor` | 重构（不改变外部行为） |
-| `docs` | 文档变更 |
-| `test` | 测试相关 |
-| `chore` | 构建/依赖/杂项 |
+| `docs`     | 文档变更        |
+| `test`     | 测试相关        |
+| `chore`    | 构建/依赖/杂项    |
 
 ### 编码规范
 
 - 遵循 [PEP 8](https://peps.python.org/pep-0008/)，缩进 4 空格，标识符使用 `snake_case`，类名使用 `PascalCase`。
 - **严格分层**：路由层（`routers`）只做参数接收与响应组装，数据库操作必须下沉到 `crud` 层，禁止在路由函数中直接编写 SQL/ORM 语句。
-- **请求/响应模型**：入参与出参一律通过 `schemas` 中的 Pydantic 模型定义，对外字段使用 camelCase 别名，内部字段使用 snake_case。
+- **请求/响应模型**：入参与出参一律通过 `schemas` 中的 Pydantic 模型定义，对外字段使用 camelCase 别名，内部字段使用 snake\_case。
 - **统一响应**：成功响应使用 `utils.response.success_response`；业务错误抛出 `HTTPException`，由全局异常处理器统一转换。
 - **异步优先**：涉及数据库、Redis、网络 I/O 的函数一律声明为 `async`，禁止在异步上下文中使用阻塞调用。
 - 新增接口需同步在路由装饰器中填写 `description`，保证 OpenAPI 文档可读性。
 
----
+***
 
 ## 许可证
 
